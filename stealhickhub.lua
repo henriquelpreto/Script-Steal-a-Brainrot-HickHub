@@ -9,8 +9,8 @@ gui.Parent = player:WaitForChild("PlayerGui")
 
 -- Criar menu pequeno no canto superior direito
 local menu = Instance.new("Frame")
-menu.Size = UDim2.new(0, 150, 0, 100) -- menor
-menu.Position = UDim2.new(1, -160, 0, 10) -- canto superior direito
+menu.Size = UDim2.new(0, 150, 0, 170) -- aumentei altura p/ caber mais 2 botões
+menu.Position = UDim2.new(1, -160, 0, 10)
 menu.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 menu.BorderSizePixel = 0
 menu.Parent = gui
@@ -60,6 +60,28 @@ autoBtn.Font = Enum.Font.GothamBold
 autoBtn.TextSize = 12
 autoBtn.Parent = menu
 
+-- Botão GOD MODE
+local godBtn = Instance.new("TextButton")
+godBtn.Size = UDim2.new(1, -10, 0, 30)
+godBtn.Position = UDim2.new(0, 5, 0, 100)
+godBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+godBtn.Text = "GOD MODE: OFF"
+godBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+godBtn.Font = Enum.Font.GothamBold
+godBtn.TextSize = 12
+godBtn.Parent = menu
+
+-- Botão SPEED + JUMP
+local sjBtn = Instance.new("TextButton")
+sjBtn.Size = UDim2.new(1, -10, 0, 30)
+sjBtn.Position = UDim2.new(0, 5, 0, 135)
+sjBtn.BackgroundColor3 = Color3.fromRGB(200, 100, 0)
+sjBtn.Text = "SPEED+JUMP: OFF"
+sjBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+sjBtn.Font = Enum.Font.GothamBold
+sjBtn.TextSize = 12
+sjBtn.Parent = menu
+
 -- Tela preta com texto
 local function showBlackScreen(text)
 	local blackScreen = Instance.new("Frame")
@@ -100,7 +122,7 @@ end
 
 -- ENTRAR NA BASE
 enterBtn.MouseButton1Click:Connect(function()
-	showBlackScreen("Stealing, 2s")
+	showBlackScreen("ENTRANDO; 3s")
 	local char = player.Character or player.CharacterAdded:Wait()
 	local hrp = char:FindFirstChild("HumanoidRootPart")
 	if hrp then
@@ -115,6 +137,46 @@ autoBtn.MouseButton1Click:Connect(function()
 	if spawnLocation then
 		local target = spawnLocation.Position + Vector3.new(0, 50, 0)
 		smoothMove(target, 1.2)
+	end
+end)
+
+-- GOD MODE Toggle
+local godActive = false
+godBtn.MouseButton1Click:Connect(function()
+	godActive = not godActive
+	godBtn.Text = "GOD MODE: " .. (godActive and "ON" or "OFF")
+
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hum = char:WaitForChild("Humanoid")
+
+	if godActive then
+		-- remove estados que derrubam
+		hum.PlatformStand = false
+		hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+		hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+		hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+	else
+		-- volta ao normal
+		hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
+		hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
+	end
+end)
+
+-- SPEED + JUMP Toggle
+local sjActive = false
+sjBtn.MouseButton1Click:Connect(function()
+	sjActive = not sjActive
+	sjBtn.Text = "SPEED+JUMP: " .. (sjActive and "ON" or "OFF")
+
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hum = char:WaitForChild("Humanoid")
+
+	if sjActive then
+		hum.WalkSpeed = 145
+		hum.JumpPower = 100
+	else
+		hum.WalkSpeed = 16
+		hum.JumpPower = 50
 	end
 end)
 
@@ -134,7 +196,7 @@ closeBtn.MouseButton1Click:Connect(function()
 	text.Font = Enum.Font.GothamBold
 	text.TextSize = 14
 	text.BackgroundTransparency = 1
-	text.ZIndex = 21 -- 🔹 Faz o texto aparecer na frente
+	text.ZIndex = 21
 	text.Parent = confirm
 
 	local yesBtn = Instance.new("TextButton")
@@ -145,7 +207,7 @@ closeBtn.MouseButton1Click:Connect(function()
 	yesBtn.TextColor3 = Color3.new(1, 1, 1)
 	yesBtn.Font = Enum.Font.GothamBold
 	yesBtn.TextSize = 14
-	yesBtn.ZIndex = 21 -- 🔹 Faz o botão aparecer na frente
+	yesBtn.ZIndex = 21
 	yesBtn.Parent = confirm
 
 	local noBtn = Instance.new("TextButton")
@@ -156,7 +218,7 @@ closeBtn.MouseButton1Click:Connect(function()
 	noBtn.TextColor3 = Color3.new(1, 1, 1)
 	noBtn.Font = Enum.Font.GothamBold
 	noBtn.TextSize = 14
-	noBtn.ZIndex = 21 -- 🔹 Faz o botão aparecer na frente
+	noBtn.ZIndex = 21
 	noBtn.Parent = confirm
 
 	yesBtn.MouseButton1Click:Connect(function()
